@@ -1,3 +1,5 @@
 ufc_api
 requests
 lxml
+Pillow
+beautifulsoup4

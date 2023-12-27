@@ -1,5 +1,10 @@
+import os
 import threading
 import tkinter as tk
+from PIL import Image, ImageTk
+import requests
+from io import BytesIO
+from bs4 import BeautifulSoup
 
 from ufc import get_fighter
 from pprint import pprint
@@ -64,14 +69,36 @@ def main_gui():
     root.mainloop()
 
 
+def get_image(url):
+    response = requests.get(url, stream=True)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # fighter image from ufc.com
+    img_url = soup.find("div", {"class": "hero-profile__image-wrap"}).find("img").get("src")
+    
+    image_response = requests.get(img_url)
+    img = Image.open(BytesIO(image_response.content))
+    img.save(os.path.join("image", "test.png"))
+
+    # photo = ImageTk.PhotoImage(img)
+
+
+def run():
+    t1 = threading.Thread(target=get_fighter_info1)
+    t2 = threading.Thread(target=get_fighter_info2)
+
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
+
+
 if __name__ == "__main__":
-    # t1 = threading.Thread(target=get_fighter_info1)
-    # t2 = threading.Thread(target=get_fighter_info2)
+    # run()
 
-    # t1.start()
-    # t2.start()
+    # main_gui()
+    fighter_name = "chan-sung-jung"
 
-    # t1.join()
-    # t2.join()
-
-    main_gui()
+    # get_image(f"https://www.ufc.com/athlete/islam-makhachev")
+    get_image(f"https://www.ufc.com/athlete/{fighter_name}")
