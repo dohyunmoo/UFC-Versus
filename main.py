@@ -25,6 +25,7 @@ def get_fighter_info1():
         )
         pprint(vars(fighter1))
     except BaseException as e:
+        print(e)
         print("Fighter name is not valid")
 
 
@@ -42,6 +43,7 @@ def get_fighter_info2():
         )
         pprint(vars(fighter2))
     except BaseException as e:
+        print(e)
         print("Fighter name is not valid")
 
 
@@ -62,23 +64,48 @@ def main_gui():
     input2 = tk.Entry(root, text="Enter fighter2 name")
     input2.grid(row=1, column=1, sticky="ew")
 
-    button1 = tk.Button(root, text="Button")
-    button1.grid(row=2, column=0, columnspan=2)  # Columnspan to span multiple columns
+    button1 = tk.Button(
+        root,
+        text="Lock In Fighter 1",
+        command=lambda: get_image("chan-sung-jung", "test1.png"),
+    )
+    button1.grid(row=2, column=0)  # Columnspan to span multiple columns
+
+    button2 = tk.Button(
+        root,
+        text="Lock In Fighter 2",
+        command=lambda: get_image("jon-jones", "test2.png"),
+    )
+    button2.grid(row=2, column=1)  # Columnspan to span multiple columns
 
     # Run the main loop
     root.mainloop()
 
 
-def get_image(url):
-    response = requests.get(url, stream=True)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    
-    # fighter image from ufc.com
-    img_url = soup.find("div", {"class": "hero-profile__image-wrap"}).find("img").get("src")
-    
-    image_response = requests.get(img_url)
-    img = Image.open(BytesIO(image_response.content))
-    img.save(os.path.join("image", "test.png"))
+def get_image(fighter_name, image_name):
+    url = f"https://www.ufc.com/athlete/{fighter_name}"
+
+    try:
+        response = requests.get(url, stream=True)
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # fighter image from ufc.com
+        img_url = (
+            soup.find("div", {"class": "hero-profile__image-wrap"})
+            .find("img")
+            .get("src")
+        )
+
+        image_response = requests.get(img_url)
+        img = Image.open(BytesIO(image_response.content))
+
+        image_path = os.path.join("image", image_name)
+        img.save(image_path)
+
+        # return image_path
+    except:
+        print("image unable to retrieve")
+        # return os.path.join("image", "default.jpg")
 
     # photo = ImageTk.PhotoImage(img)
 
@@ -94,11 +121,13 @@ def run():
     t2.join()
 
 
+def analyze_outcome(fighter1, fighter2):
+    pass
+
+
 if __name__ == "__main__":
-    # run()
+    run()
 
     # main_gui()
-    fighter_name = "chan-sung-jung"
 
     # get_image(f"https://www.ufc.com/athlete/islam-makhachev")
-    get_image(f"https://www.ufc.com/athlete/{fighter_name}")
