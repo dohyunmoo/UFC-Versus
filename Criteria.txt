@@ -1,10 +1,10 @@
 fighter1 - fighter 2
 
-1. weightclass difference -> (HW = 1000, LHW = 875, MW = 750, WW = 625, LW = 500, FW = 375, BW = 250, FLW = 125)
+1. weightclass difference -> (HW = 1000, LHW = 875, MW = 750, WW = 625, LW = 500, FW = 375, BW = 250, FLW = 125) : max 100
 
-2. age difference -> (HW prime = 35, LHW, MW prime = 34, WW, LW, FW prime = 32, BW, FLW prime = 31)
+2. age difference -> (HW prime = 35, LHW, MW prime = 34, WW, LW, FW prime = 32, BW, FLW prime = 31) : max 80
 
-3. technicalities
+3. technicalities : max 60
 
 (high strike rate + low strike defence rate) => consider ko loss rate for fighter 2 => ko loss or decision loss for fighter 2, vice versa
 (high takedown rate + low takedown defence rate) => consider sub loss rate for fighter 2, sub win rate for fighter 1 => sub loss or decision
@@ -12,6 +12,6 @@ fighter1 - fighter 2
 													
 (high takedown attempt/landed rate or high strike attempt/landed rate) => lots of activity in fights => more points toward winning a decision
 
-4. fighter height difference -> more value for strikers 
+4. fighter height difference -> more value for strikers : max 40
 
-5. UFC experience => more fights in UFC, more score as UFC competition is higher than other promotions
+5. UFC experience => more fights in UFC, more score as UFC competition is higher than other promotions : max 20
