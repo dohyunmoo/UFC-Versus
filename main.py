@@ -56,7 +56,6 @@ def main_gui():
     root = tk.Tk()
     root.title("UFC Matchup Predictor")
 
-    # Create and place widgets using grid
     label1 = tk.Label(root, text="Fighter 1")
     label1.grid(row=0, column=0)
 
@@ -74,14 +73,42 @@ def main_gui():
         text="Lock In Fighter 1",
         command=lambda: get_image("chan-sung-jung", "test1.png"),
     )
-    button1.grid(row=2, column=0)  # Columnspan to span multiple columns
+    button1.grid(row=2, column=0)
 
     button2 = tk.Button(
         root,
         text="Lock In Fighter 2",
         command=lambda: get_image("jon-jones", "test2.png"),
     )
-    button2.grid(row=2, column=1)  # Columnspan to span multiple columns
+    button2.grid(row=2, column=1)
+
+    fighter_name_label1 = tk.Label(root, text="Fighter 1", font=("Arial", 36))
+    fighter_name_label1.grid(row=3, column=0, sticky="ew")
+
+    fighter_name_label2 = tk.Label(root, text="Fighter 2", font=("Arial", 36))
+    fighter_name_label2.grid(row=3, column=1, sticky="ew")
+
+    root.rowconfigure(4, minsize=500)
+    root.columnconfigure(0, minsize=400)
+    root.columnconfigure(1, minsize=400)
+
+    img1 = Image.open("./image/default2.png")
+    img1 = img1.resize((250, 386))
+    img_tk1 = ImageTk.PhotoImage(img1)
+    panel1 = tk.Label(root, image=img_tk1)
+    panel1.grid(row=4, column=0)
+
+    img2 = Image.open("./image/test.png")
+    img2 = img2.resize((250, 386))
+    img_tk2 = ImageTk.PhotoImage(img2)
+    panel2 = tk.Label(root, image=img_tk2)
+    panel2.grid(row=4, column=1)
+
+    analyze_button = tk.Button(
+        root,
+        text="Start Analyzing",
+    )
+    analyze_button.grid(row=5, column=0, columnspan=2, padx=25, pady=25)
 
     # Run the main loop
     root.mainloop()
