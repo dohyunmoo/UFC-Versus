@@ -16,12 +16,14 @@ def get_fighter_info1():
         info1 = get_fighter("Jon Jones")
         fighter1 = Fighter(
             info1["name"],
+            info1["age"],
             info1["height"],
             info1["losses"],
             info1["wins"],
             info1["strikes"],
             info1["takedowns"],
             info1["weight_class"],
+            info1["fights"],
         )
         pprint(vars(fighter1))
     except BaseException as e:
@@ -34,14 +36,17 @@ def get_fighter_info2():
         info2 = get_fighter("Brandon Moreno")
         fighter2 = Fighter(
             info2["name"],
+            info2["age"],
             info2["height"],
             info2["losses"],
             info2["wins"],
             info2["strikes"],
             info2["takedowns"],
             info2["weight_class"],
+            info2["fights"],
         )
         pprint(vars(fighter2))
+        # pprint(info2)
     except BaseException as e:
         print(e)
         print("Fighter name is not valid")
@@ -126,8 +131,8 @@ def analyze_outcome(fighter1, fighter2):
 
 
 if __name__ == "__main__":
-    run()
+    # run()
 
-    # main_gui()
+    main_gui()
 
-    # get_image(f"https://www.ufc.com/athlete/islam-makhachev")
+    # get_image(f"islam-makhachev", "test.png")

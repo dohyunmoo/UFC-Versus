@@ -1,6 +1,7 @@
 class Fighter:
-    def __init__(self, name, height, losses, wins, strikes, takedowns, weight_class):
+    def __init__(self, name, age, height, losses, wins, strikes, takedowns, weight_class, fights):
         self.name = name
+        self.age = age
         self.height = height
         self.losses = losses
         self.wins = wins
@@ -23,6 +24,7 @@ class Fighter:
             self._total_fights()
         )
         self.strike_landed_per_fight = int(strikes["landed"]) / (self._total_fights())
+        self.total_fights_in_UFC = self._fights_in_UFC(fights)
 
     def _total_strikes(self):
         total = 0
@@ -37,6 +39,13 @@ class Fighter:
 
     def _total_fights(self):
         return int(self.wins["total"]) + int(self.losses["total"])
+    
+    def _fights_in_UFC(self, fights: list):
+        ufc_fights = 0
+        for fight in fights:
+            if "ufc" in fight["name"].lower():
+                ufc_fights += 1
+        return ufc_fights
 
     def get_fight_relevant_data(self):
         return
