@@ -82,13 +82,23 @@ def main_gui():
     root.columnconfigure(1, minsize=400)
 
     # fighter images
-    img1 = Image.open("./image/default2.png")
+    img1 = Image.open(
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.path.join("image", "default.png"),
+        )
+    )
     img1 = img1.resize((250, 386))
     img_tk1 = ImageTk.PhotoImage(img1)
     panel1 = tk.Label(root, image=img_tk1)
     panel1.grid(row=4, column=0)
 
-    img2 = Image.open("./image/test.png")
+    img2 = Image.open(
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.path.join("image", "default.png"),
+        )
+    )
     img2 = img2.resize((250, 386))
     img_tk2 = ImageTk.PhotoImage(img2)
     panel2 = tk.Label(root, image=img_tk2)
@@ -99,7 +109,7 @@ def main_gui():
         root,
         text="Lock In Fighter 1",
         command=lambda: update_fighter(
-            "chan-sung-jung", "test1.png", fighter_name_label1
+            name_to_query(input1.get()), "fighter1.png", fighter_name_label1, panel1
         ),
     )
     button1.grid(row=2, column=0)
@@ -107,7 +117,9 @@ def main_gui():
     button2 = tk.Button(
         root,
         text="Lock In Fighter 2",
-        command=lambda: update_fighter("jon-jones", "test2.png", fighter_name_label2),
+        command=lambda: update_fighter(
+            name_to_query(input2.get()), "fighter2.png", fighter_name_label2, panel2
+        ),
     )
     button2.grid(row=2, column=1)
 
@@ -121,7 +133,7 @@ def main_gui():
     root.mainloop()
 
 
-def update_fighter(fighter_name, image_name, label):
+def update_fighter(fighter_name, image_name, label, img_label):
     url = f"https://www.ufc.com/athlete/{fighter_name}"
 
     try:
@@ -138,14 +150,42 @@ def update_fighter(fighter_name, image_name, label):
         image_response = requests.get(img_url)
         img = Image.open(BytesIO(image_response.content))
 
-        image_path = os.path.join("image", image_name)
+        image_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.path.join("image", image_name),
+        )
         img.save(image_path)
 
         label.config(text=query_to_name(fighter_name))
 
+        new_img = Image.open(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                os.path.join("image", image_name),
+            )
+        )
+        new_img = new_img.resize((250, 386))
+        new_img_tk = ImageTk.PhotoImage(new_img)
+
+        img_label.config(image=new_img_tk)
+        img_label.image = new_img_tk
+
         # return image_path
-    except:
+    except Exception as e:
         print("image unable to retrieve")
+        label.config(text=query_to_name(fighter_name))
+
+        new_img = Image.open(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                os.path.join("image", "default.png"),
+            )
+        )
+        new_img = new_img.resize((250, 386))
+        new_img_tk = ImageTk.PhotoImage(new_img)
+
+        img_label.config(image=new_img_tk)
+        img_label.image = new_img_tk
         # return os.path.join("image", "default.jpg")
 
     # photo = ImageTk.PhotoImage(img)
