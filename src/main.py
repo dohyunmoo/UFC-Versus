@@ -12,45 +12,31 @@ from src.fighter import Fighter
 from src.misc import *
 
 
-def get_fighter_info1():
-    try:
-        info1 = get_fighter("Jon Jones")
-        fighter1 = Fighter(
-            info1["name"],
-            info1["age"],
-            info1["height"],
-            info1["losses"],
-            info1["wins"],
-            info1["strikes"],
-            info1["takedowns"],
-            info1["weight_class"],
-            info1["fights"],
-        )
-        pprint(vars(fighter1))
-    except BaseException as e:
-        print(e)
-        print("Fighter name is not valid")
+fighter1, fighter2 = None, None
 
 
-def get_fighter_info2():
+def get_fighter_info1(fighter_name):
     try:
-        info2 = get_fighter("Brandon Moreno")
-        fighter2 = Fighter(
-            info2["name"],
-            info2["age"],
-            info2["height"],
-            info2["losses"],
-            info2["wins"],
-            info2["strikes"],
-            info2["takedowns"],
-            info2["weight_class"],
-            info2["fights"],
-        )
-        pprint(vars(fighter2))
-        # pprint(info2)
+        info1 = get_fighter(fighter_name)
+        if fighter_name.lower() != info1["name"].lower():
+            print(f"{fighter_name.lower()} : {info1['name'].lower()}")
+            print("Fighter name is not valid2")
+        else:
+            fighter = Fighter(
+                info1["name"],
+                info1["age"],
+                info1["height"],
+                info1["losses"],
+                info1["wins"],
+                info1["strikes"],
+                info1["takedowns"],
+                info1["weight_class"],
+                info1["fights"],
+            )
+            return fighter
     except BaseException as e:
         print(e)
-        print("Fighter name is not valid")
+        print("Fighter name is not valid1")
 
 
 def main_gui():
@@ -109,7 +95,7 @@ def main_gui():
         root,
         text="Lock In Fighter 1",
         command=lambda: update_fighter(
-            name_to_query(input1.get()), "fighter1.png", fighter_name_label1, panel1
+            name_to_query(input1.get()), "fighter1.png", fighter_name_label1, panel1, 1
         ),
     )
     button1.grid(row=2, column=0)
@@ -118,7 +104,7 @@ def main_gui():
         root,
         text="Lock In Fighter 2",
         command=lambda: update_fighter(
-            name_to_query(input2.get()), "fighter2.png", fighter_name_label2, panel2
+            name_to_query(input2.get()), "fighter2.png", fighter_name_label2, panel2, 2
         ),
     )
     button2.grid(row=2, column=1)
@@ -133,8 +119,21 @@ def main_gui():
     root.mainloop()
 
 
-def update_fighter(fighter_name, image_name, label, img_label):
+def update_fighter(fighter_name, image_name, label, img_label, num):
     url = f"https://www.ufc.com/athlete/{fighter_name}"
+
+    if num == 1:
+        global fighter1
+        fighter1 = get_fighter_info1(query_to_name(fighter_name))
+    else:
+        global fighter2
+        fighter2 = get_fighter_info1(query_to_name(fighter_name))
+
+    try:
+        pprint(vars(fighter1))
+        pprint(vars(fighter2))
+    except:
+        pass
 
     try:
         response = requests.get(url, stream=True)
@@ -191,24 +190,9 @@ def update_fighter(fighter_name, image_name, label, img_label):
     # photo = ImageTk.PhotoImage(img)
 
 
-def run():
-    t1 = threading.Thread(target=get_fighter_info1)
-    t2 = threading.Thread(target=get_fighter_info2)
-
-    t1.start()
-    t2.start()
-
-    t1.join()
-    t2.join()
-
-
 def analyze_outcome(fighter1, fighter2):
     pass
 
 
 if __name__ == "__main__":
-    # run()
-
     main_gui()
-
-    # get_image(f"islam-makhachev", "test.png")
