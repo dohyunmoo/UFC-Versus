@@ -13,25 +13,35 @@ from src.misc import *
 
 
 fighter1, fighter2 = None, None
+settings_open = False
+
+metrics = {
+    "weight-class": 100,
+    "age": 80,
+    "technics": 60,
+    "height": 40,
+    "UFC-experience": 20,
+}
 
 
 def get_fighter_info(fighter_name):
-    info1 = get_fighter(fighter_name)
-    if fighter_name.lower() != info1["name"].lower():
-        print(f"{fighter_name.lower()} : {info1['name'].lower()}")
+    info = get_fighter(fighter_name)
+    pprint(info)
+    if fighter_name.lower() != info["name"].lower():
+        print(f"{fighter_name.lower()} : {info['name'].lower()}")
         print("Fighter name is not valid2")
         raise Exception
     else:
         fighter = Fighter(
-            info1["name"],
-            info1["age"],
-            info1["height"],
-            info1["losses"],
-            info1["wins"],
-            info1["strikes"],
-            info1["takedowns"],
-            info1["weight_class"],
-            info1["fights"],
+            info["name"],
+            info["age"],
+            info["height"],
+            info["losses"],
+            info["wins"],
+            info["strikes"],
+            info["takedowns"],
+            info["weight_class"],
+            info["fights"],
         )
         return fighter
 
@@ -131,6 +141,13 @@ def main_gui():
     )
     analyze_button.grid(row=6, column=0, columnspan=3, padx=25, pady=25)
 
+    settings_button = tk.Button(
+        root,
+        text="Settings",
+        command=lambda: open_settings(root),
+    )
+    settings_button.grid(row=7, column=0, columnspan=3, padx=25, pady=25)
+
     # Run the main loop
     root.mainloop()
 
@@ -212,6 +229,30 @@ def analyze_outcome():
 
     pprint(vars(fighter1))
     pprint(vars(fighter2))
+
+
+def open_settings(root):
+    global settings_open
+
+    if not settings_open:
+        settings_window = tk.Toplevel(root)
+        settings_window.title("Settings")
+
+        label_settings = tk.Label(settings_window, text="Settings Page")
+        label_settings.pack()
+
+        settings_open = True
+
+        settings_window.protocol("WM_DELETE_WINDOW", lambda: on_settings_close(settings_window))
+    else:
+        print("Settings open already")
+
+
+def on_settings_close(window):
+    global settings_open
+    settings_open = False
+
+    window.destroy()
 
 
 if __name__ == "__main__":
