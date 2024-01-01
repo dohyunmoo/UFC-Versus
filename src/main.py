@@ -15,12 +15,12 @@ from src.misc import *
 fighter1, fighter2 = None, None
 
 
-def get_fighter_info1(fighter_name):
+def get_fighter_info(fighter_name):
     info1 = get_fighter(fighter_name)
     if fighter_name.lower() != info1["name"].lower():
         print(f"{fighter_name.lower()} : {info1['name'].lower()}")
         print("Fighter name is not valid2")
-        return Exception
+        raise Exception
     else:
         fighter = Fighter(
             info1["name"],
@@ -127,6 +127,7 @@ def main_gui():
     analyze_button = tk.Button(
         root,
         text="Start Analyzing",
+        command=analyze_outcome,
     )
     analyze_button.grid(row=6, column=0, columnspan=3, padx=25, pady=25)
 
@@ -140,10 +141,10 @@ def update_fighter(fighter_name, image_name, label, img_label, num, status_label
     try:
         if num == 1:
             global fighter1
-            fighter1 = get_fighter_info1(query_to_name(fighter_name))
+            fighter1 = get_fighter_info(query_to_name(fighter_name))
         else:
             global fighter2
-            fighter2 = get_fighter_info1(query_to_name(fighter_name))
+            fighter2 = get_fighter_info(query_to_name(fighter_name))
     except:
         print("loading fighter info failed")
         status_label.config(
@@ -201,8 +202,16 @@ def update_fighter(fighter_name, image_name, label, img_label, num, status_label
         img_label.image = new_img_tk
 
 
-def analyze_outcome(fighter1, fighter2):
-    pass
+def analyze_outcome():
+    global fighter1
+    global fighter2
+
+    if fighter1 == None or fighter2 == None:
+        print("Two fighters need to be loaded in order to start analyzing")
+        return
+
+    pprint(vars(fighter1))
+    pprint(vars(fighter2))
 
 
 if __name__ == "__main__":
