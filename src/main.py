@@ -26,7 +26,6 @@ metrics = {
 
 def get_fighter_info(fighter_name):
     info = get_fighter(fighter_name)
-    pprint(info)
     if fighter_name.lower() != info["name"].lower():
         print(f"{fighter_name.lower()} : {info['name'].lower()}")
         print("Fighter name is not valid2")
@@ -49,6 +48,7 @@ def get_fighter_info(fighter_name):
 def main_gui():
     root = tk.Tk()
     root.title("UFC Matchup Predictor")
+    root.option_add("*Font", ("Calibri"))
 
     label1 = tk.Label(root, text="Fighter 1")
     label1.grid(row=0, column=0, padx=20, pady=10)
@@ -83,26 +83,18 @@ def main_gui():
     root.columnconfigure(2, minsize=400)
 
     # fighter images
-    img1 = Image.open(
+    default_img = Image.open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             os.path.join("image", "default.png"),
         )
     )
-    img1 = img1.resize((250, 386))
-    img_tk1 = ImageTk.PhotoImage(img1)
-    panel1 = tk.Label(root, image=img_tk1)
+    default_img = default_img.resize((250, 386))
+    default_img_tk = ImageTk.PhotoImage(default_img)
+    panel1 = tk.Label(root, image=default_img_tk)
     panel1.grid(row=5, column=0)
 
-    img2 = Image.open(
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            os.path.join("image", "default.png"),
-        )
-    )
-    img2 = img2.resize((250, 386))
-    img_tk2 = ImageTk.PhotoImage(img2)
-    panel2 = tk.Label(root, image=img_tk2)
+    panel2 = tk.Label(root, image=default_img_tk)
     panel2.grid(row=5, column=2)
 
     # lock in buttons
@@ -139,14 +131,14 @@ def main_gui():
         text="Start Analyzing",
         command=analyze_outcome,
     )
-    analyze_button.grid(row=6, column=0, columnspan=3, padx=25, pady=25)
+    analyze_button.grid(row=6, column=1, columnspan=2, pady=25)
 
     settings_button = tk.Button(
         root,
         text="Settings",
         command=lambda: open_settings(root),
     )
-    settings_button.grid(row=7, column=0, columnspan=3, padx=25, pady=25)
+    settings_button.grid(row=6, column=0, padx=25, pady=25)
 
     # Run the main loop
     root.mainloop()
@@ -233,19 +225,93 @@ def analyze_outcome():
 
 def open_settings(root):
     global settings_open
+    global metrics
 
     if not settings_open:
         settings_window = tk.Toplevel(root)
         settings_window.title("Settings")
 
-        label_settings = tk.Label(settings_window, text="Settings Page")
-        label_settings.pack()
+        settings_title = tk.Label(
+            settings_window, text="Analysis Criteria", font=("Calibri", 24)
+        )
+        settings_title.grid(
+            row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=20
+        )
+
+        current_label = tk.Label(settings_window, text="Current Value")
+        current_label.grid(row=1, column=1)
+
+        new_label = tk.Label(settings_window, text="New Value")
+        new_label.grid(row=1, column=2)
+
+        weight_class_label = tk.Label(settings_window, text="Weight Class: ")
+        weight_class_label.grid(row=2, column=0)
+
+        weight_current_class_label = tk.Label(
+            settings_window, text=str(metrics["weight-class"])
+        )
+        weight_current_class_label.grid(row=2, column=1)
+
+        weight_class_input = tk.Entry(settings_window)
+        weight_class_input.grid(row=2, column=2, padx=10, pady=15)
+
+        age_label = tk.Label(settings_window, text="Age: ")
+        age_label.grid(row=3, column=0)
+
+        age_current_label = tk.Label(settings_window, text=str(metrics["age"]))
+        age_current_label.grid(row=3, column=1)
+
+        age_input = tk.Entry(settings_window)
+        age_input.grid(row=3, column=2, padx=10, pady=15)
+
+        technics_label = tk.Label(settings_window, text="Technics: ")
+        technics_label.grid(row=4, column=0)
+
+        technics_current_label = tk.Label(
+            settings_window, text=str(metrics["technics"])
+        )
+        technics_current_label.grid(row=4, column=1)
+
+        technics_input = tk.Entry(settings_window)
+        technics_input.grid(row=4, column=2, padx=10, pady=15)
+
+        height_label = tk.Label(settings_window, text="Height: ")
+        height_label.grid(row=5, column=0)
+
+        height_current_label = tk.Label(settings_window, text=str(metrics["height"]))
+        height_current_label.grid(row=5, column=1)
+
+        height_input = tk.Entry(settings_window)
+        height_input.grid(row=5, column=2, padx=10, pady=15)
+
+        experience_label = tk.Label(settings_window, text="UFC Fight Experience: ")
+        experience_label.grid(row=6, column=0)
+
+        experience_current_label = tk.Label(
+            settings_window, text=str(metrics["UFC-experience"])
+        )
+        experience_current_label.grid(row=6, column=1)
+
+        experience_input = tk.Entry(settings_window)
+        experience_input.grid(row=6, column=2, padx=10, pady=15)
+
+        save_button = tk.Button(
+            settings_window,
+            text="Save",
+            command=lambda: on_settings_close(settings_window),
+        )
+        save_button.grid(row=7, column=0, columnspan=3, pady=20)
 
         settings_open = True
 
-        settings_window.protocol("WM_DELETE_WINDOW", lambda: on_settings_close(settings_window))
+        settings_window.protocol(
+            "WM_DELETE_WINDOW", lambda: on_settings_close(settings_window)
+        )
     else:
         print("Settings open already")
+
+def save_metrics():
+    pass
 
 
 def on_settings_close(window):
