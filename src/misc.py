@@ -5,3 +5,13 @@ def query_to_name(name: str):
 
 def name_to_query(name: str):
     return "-".join(name.lower().split(" "))
+
+
+def str_to_num(input: str):
+    try:
+        return int(input)
+    except:
+        try:
+            return float(input)
+        except:
+            raise ValueError

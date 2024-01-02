@@ -214,9 +214,14 @@ def update_fighter(fighter_name, image_name, label, img_label, num, status_label
 def analyze_outcome():
     global fighter1
     global fighter2
+    global settings_open
 
     if fighter1 == None or fighter2 == None:
         print("Two fighters need to be loaded in order to start analyzing")
+        return
+    
+    if settings_open:
+        print("Please close the settings page to start the analysis")
         return
 
     pprint(vars(fighter1))
@@ -235,7 +240,7 @@ def open_settings(root):
             settings_window, text="Analysis Criteria", font=("Calibri", 24)
         )
         settings_title.grid(
-            row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=20
+            row=0, column=0, columnspan=2, sticky="ew", padx=20, pady=20
         )
 
         current_label = tk.Label(settings_window, text="Current Value")
@@ -253,7 +258,7 @@ def open_settings(root):
         weight_current_class_label.grid(row=2, column=1)
 
         weight_class_input = tk.Entry(settings_window)
-        weight_class_input.grid(row=2, column=2, padx=10, pady=15)
+        weight_class_input.grid(row=2, column=2, padx=20, pady=15)
 
         age_label = tk.Label(settings_window, text="Age: ")
         age_label.grid(row=3, column=0)
@@ -262,7 +267,7 @@ def open_settings(root):
         age_current_label.grid(row=3, column=1)
 
         age_input = tk.Entry(settings_window)
-        age_input.grid(row=3, column=2, padx=10, pady=15)
+        age_input.grid(row=3, column=2, padx=20, pady=15)
 
         technics_label = tk.Label(settings_window, text="Technics: ")
         technics_label.grid(row=4, column=0)
@@ -273,7 +278,7 @@ def open_settings(root):
         technics_current_label.grid(row=4, column=1)
 
         technics_input = tk.Entry(settings_window)
-        technics_input.grid(row=4, column=2, padx=10, pady=15)
+        technics_input.grid(row=4, column=2, padx=20, pady=15)
 
         height_label = tk.Label(settings_window, text="Height: ")
         height_label.grid(row=5, column=0)
@@ -282,7 +287,7 @@ def open_settings(root):
         height_current_label.grid(row=5, column=1)
 
         height_input = tk.Entry(settings_window)
-        height_input.grid(row=5, column=2, padx=10, pady=15)
+        height_input.grid(row=5, column=2, padx=20, pady=15)
 
         experience_label = tk.Label(settings_window, text="UFC Fight Experience: ")
         experience_label.grid(row=6, column=0)
@@ -293,14 +298,24 @@ def open_settings(root):
         experience_current_label.grid(row=6, column=1)
 
         experience_input = tk.Entry(settings_window)
-        experience_input.grid(row=6, column=2, padx=10, pady=15)
+        experience_input.grid(row=6, column=2, padx=20, pady=15)
+
+        warning_label = tk.Label(settings_window, text="")
+        warning_label.grid(row=7, column=0, columnspan=2, padx=20, pady=15)
 
         save_button = tk.Button(
             settings_window,
             text="Save",
+            command=lambda: save_metrics(settings_window, weight_class_input, age_input, technics_input, height_input, experience_input, warning_label),
+        )
+        save_button.grid(row=8, column=0, pady=20)
+
+        cancel_button = tk.Button(
+            settings_window,
+            text="Cancel",
             command=lambda: on_settings_close(settings_window),
         )
-        save_button.grid(row=7, column=0, columnspan=3, pady=20)
+        cancel_button.grid(row=8, column=1, pady=20)
 
         settings_open = True
 
@@ -310,8 +325,20 @@ def open_settings(root):
     else:
         print("Settings open already")
 
-def save_metrics():
-    pass
+def save_metrics(window, w_entry, a_entry, t_entry, h_entry, e_entry, warning_label):
+    global metrics
+
+    try:
+        metrics["weight-class"] = str_to_num(w_entry.get())
+        metrics["age"] = str_to_num(a_entry.get())
+        metrics["technics"] = str_to_num(t_entry.get())
+        metrics["height"] = str_to_num(h_entry.get())
+        metrics["UFC-experience"] = str_to_num(e_entry.get())
+
+        on_settings_close(window)
+
+    except ValueError:
+        warning_label.config(text="Entered input is invalid", fg="red")
 
 
 def on_settings_close(window):
