@@ -15,3 +15,10 @@ def str_to_num(input: str):
             return float(input)
         except:
             raise ValueError
+
+
+def height_to_num(height: str):
+    # 1 foot == 12 inches
+    height_list = height.split("'")
+    height_inches = int(height_list[0]) * 12 + int(height_list[1][:-1])
+    return height_inches

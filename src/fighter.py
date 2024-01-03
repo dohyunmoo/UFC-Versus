@@ -1,10 +1,13 @@
+from src.misc import *
+
+
 class Fighter:
     def __init__(
         self, name, age, height, losses, wins, strikes, takedowns, weight_class, fights
     ):
         self.name = name
         self.age = age
-        self.height = height
+        self.height = height_to_num(height)
         self.losses = losses
         self.wins = wins
         self.strikes = strikes

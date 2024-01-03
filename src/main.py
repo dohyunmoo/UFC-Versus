@@ -129,7 +129,7 @@ def main_gui():
     analyze_button = tk.Button(
         root,
         text="Start Analyzing",
-        command=analyze_outcome,
+        command=setup_analysis,
     )
     analyze_button.grid(row=6, column=1, columnspan=2, pady=25)
 
@@ -154,11 +154,12 @@ def update_fighter(fighter_name, image_name, label, img_label, num, status_label
         else:
             global fighter2
             fighter2 = get_fighter_info(query_to_name(fighter_name))
-    except:
+    except Exception as e:
         print("loading fighter info failed")
         status_label.config(
             text="Fighter info not found / Invalid fighter name", fg="red"
         )
+        print(e)
         return
 
     status_label.config(text="")
@@ -211,21 +212,115 @@ def update_fighter(fighter_name, image_name, label, img_label, num, status_label
         img_label.image = new_img_tk
 
 
-def analyze_outcome():
+def setup_analysis():
     global fighter1
     global fighter2
     global settings_open
+    global metrics
 
     if fighter1 == None or fighter2 == None:
         print("Two fighters need to be loaded in order to start analyzing")
         return
-    
+
     if settings_open:
         print("Please close the settings page to start the analysis")
         return
 
+    # Analysis Criteria
+    result_fighter1 = {
+        "weight-class-score": -1,
+        "age-score": -1,
+        "technics-score": -1,
+        "height-score": 0,
+        "UFC-experience-score": -1,
+    }
+    result_fighter2 = {
+        "weight-class-score": -1,
+        "age-score": -1,
+        "technics-score": -1,
+        "height-score": 0,
+        "UFC-experience-score": -1,
+    }
+
+    total_weight = sum(metrics.values())
+
+    weight_class_scores = {
+        "Heavyweight": (8, 35),
+        "Light Heavyweight": (7, 34),
+        "Middleweight": (6, 34),
+        "Welterweight": (5, 32),
+        "Lightweight": (4, 32),
+        "Featherweight": (3, 32),
+        "Bantamweight": (2, 31),
+        "Flyweight": (1, 31),
+    }
+
     pprint(vars(fighter1))
     pprint(vars(fighter2))
+
+    # weight class difference score
+    if (
+        weight_class_scores[fighter1.weight_class][0]
+        > weight_class_scores[fighter2.weight_class][0]
+    ):
+        result_fighter1["weight-class-score"] = (
+            weight_class_scores[fighter1.weight_class][0]
+            - weight_class_scores[fighter2.weight_class][0]
+        )
+    elif (
+        weight_class_scores[fighter2.weight_class][0]
+        > weight_class_scores[fighter1.weight_class][0]
+    ):
+        result_fighter2["weight-class-score"] = (
+            weight_class_scores[fighter2.weight_class][0]
+            - weight_class_scores[fighter1.weight_class][0]
+        )
+
+    # age difference score
+    result_fighter1["age-score"] = 1 / (
+        abs(int(fighter1.age) - weight_class_scores[fighter1.weight_class][1]) + 1
+    )
+    result_fighter2["age-score"] = 1 / (
+        abs(int(fighter2.age) - weight_class_scores[fighter2.weight_class][1]) + 1
+    )
+
+    # technics score
+
+    # height score
+    if fighter1.height > fighter2.height:
+        result_fighter1["height-score"] = (fighter1.height - fighter2.height) / 10
+    elif fighter2.height > fighter1.height:
+        result_fighter2["height-score"] = (fighter2.height - fighter1.height) / 10
+
+    # experience score
+    result_fighter1["UFC-experience-score"] = fighter1.total_fights_in_UFC / 10
+    result_fighter2["UFC-experience-score"] = fighter2.total_fights_in_UFC / 10
+
+    total_result_fighter1 = 0
+    total_result_fighter2 = 0
+
+    for key, metric_value in metrics.items():
+        if result_fighter1[f"{key}-score"] != -1:
+            total_result_fighter1 += result_fighter1[f"{key}-score"] * metric_value
+
+        if result_fighter2[f"{key}-score"] != -1:
+            total_result_fighter2 += result_fighter2[f"{key}-score"] * metric_value
+
+    print(f"fighter1 score - {total_result_fighter1}")
+    print(f"fighter2 score - {total_result_fighter2}")
+
+    fighter1_ratio = total_result_fighter1 / (
+        total_result_fighter1 + total_result_fighter2
+    )
+    fighter2_ratio = total_result_fighter2 / (
+        total_result_fighter1 + total_result_fighter2
+    )
+
+    print(f"{fighter1_ratio} : {fighter2_ratio}")
+
+
+def analyze_outcome():
+    pass
 
 
 def open_settings(root):
@@ -306,7 +401,15 @@ def open_settings(root):
         save_button = tk.Button(
             settings_window,
             text="Save",
-            command=lambda: save_metrics(settings_window, weight_class_input, age_input, technics_input, height_input, experience_input, warning_label),
+            command=lambda: save_metrics(
+                settings_window,
+                weight_class_input,
+                age_input,
+                technics_input,
+                height_input,
+                experience_input,
+                warning_label,
+            ),
         )
         save_button.grid(row=8, column=0, pady=20)
 
@@ -324,6 +427,7 @@ def open_settings(root):
         )
     else:
         print("Settings open already")
+
 
 def save_metrics(window, w_entry, a_entry, t_entry, h_entry, e_entry, warning_label):
     global metrics
@@ -346,7 +450,3 @@ def on_settings_close(window):
     settings_open = False
 
     window.destroy()
-
-
-if __name__ == "__main__":
-    main_gui()
