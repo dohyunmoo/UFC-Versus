@@ -26,13 +26,17 @@ metrics = {
 
 def get_fighter_info(fighter_name):
     info = get_fighter(fighter_name)
-    if fighter_name.lower() != info["name"].lower():
+    if (
+        fighter_name.lower() != info["name"].lower()
+        and fighter_name.lower() != info["nickname"].lower()
+    ):
         print(f"{fighter_name.lower()} : {info['name'].lower()}")
         print("Fighter name is not valid2")
         raise Exception
     else:
         fighter = Fighter(
             info["name"],
+            info["nickname"],
             info["age"],
             info["height"],
             info["losses"],
@@ -50,35 +54,67 @@ def main_gui():
     root.title("UFC Matchup Predictor")
     root.option_add("*Font", ("Calibri"))
 
+    rows = {
+        "title": 0,
+        "subtitle": 1,
+        "input": 2,
+        "status": 3,
+        "input-button": 4,
+        "fighter-name": 5,
+        "fighter-nickname": 6,
+        "fighter-image": 7,
+        "actions-error": 8,
+        "actions": 9,
+    }
+
+    title = tk.Label(root, text="UFC Matchup Predictor", font=("Calibri", 48))
+    title.grid(row=rows["title"], column=0, columnspan=3, pady=10)
+
     label1 = tk.Label(root, text="Fighter 1")
-    label1.grid(row=0, column=0, padx=20, pady=10)
+    label1.grid(row=rows["subtitle"], column=0, padx=20, pady=5)
 
     label2 = tk.Label(root, text="Fighter 2")
-    label2.grid(row=0, column=2, padx=20, pady=10)
+    label2.grid(row=rows["subtitle"], column=2, padx=20, pady=5)
 
     # fighter name user inputs
     input1 = tk.Entry(root, text="Enter fighter1 name")
-    input1.grid(row=1, column=0, sticky="ew", padx=20, pady=10)
+    input1.grid(row=rows["input"], column=0, sticky="ew", padx=20, pady=5)
 
     input2 = tk.Entry(root, text="Enter fighter2 name")
-    input2.grid(row=1, column=2, sticky="ew", padx=20, pady=10)
+    input2.grid(row=rows["input"], column=2, sticky="ew", padx=20, pady=5)
 
     status_label1 = tk.Label(root, text="")
-    status_label1.grid(row=2, column=0, padx=20, pady=3)
+    status_label1.grid(row=rows["status"], column=0, padx=20, pady=3)
     status_label2 = tk.Label(root, text="")
-    status_label2.grid(row=2, column=2, padx=20, pady=3)
+    status_label2.grid(row=rows["status"], column=2, padx=20, pady=3)
 
     # fighter name labels
-    fighter_name_label1 = tk.Label(root, text="Fighter 1", font=("Arial", 36))
-    fighter_name_label1.grid(row=4, column=0, sticky="ew", pady=(20, 0))
+    fighter_name_label1 = tk.Label(root, text="Fighter 1", font=("Calibri", 40))
+    fighter_name_label1.grid(
+        row=rows["fighter-name"], column=0, sticky="ew", pady=(10, 0)
+    )
 
-    fighter_name_label2 = tk.Label(root, text="Fighter 2", font=("Arial", 36))
-    fighter_name_label2.grid(row=4, column=2, sticky="ew", pady=(20, 0))
+    fighter_name_label2 = tk.Label(root, text="Fighter 2", font=("Calibri", 40))
+    fighter_name_label2.grid(
+        row=rows["fighter-name"], column=2, sticky="ew", pady=(10, 0)
+    )
 
     vs_label = tk.Label(root, text="VS", font=("Arial", 60))
-    vs_label.grid(row=4, column=1, sticky="ew", padx=25, pady=(20, 0))
+    vs_label.grid(
+        row=rows["fighter-name"], column=1, sticky="ew", padx=25, pady=(20, 0)
+    )
 
-    root.rowconfigure(5, minsize=500)
+    fighter_nickname_label1 = tk.Label(root, text='"nickname"', font=("Arial", 16))
+    fighter_nickname_label1.grid(
+        row=rows["fighter-nickname"], column=0, sticky="ew", pady=(0, 0)
+    )
+
+    fighter_nickname_label2 = tk.Label(root, text='"nickname"', font=("Arial", 16))
+    fighter_nickname_label2.grid(
+        row=rows["fighter-nickname"], column=2, sticky="ew", pady=(0, 0)
+    )
+
+    root.rowconfigure(rows["fighter-image"], minsize=500)
     root.columnconfigure(0, minsize=400)
     root.columnconfigure(2, minsize=400)
 
@@ -89,13 +125,13 @@ def main_gui():
             os.path.join("image", "default.png"),
         )
     )
-    default_img = default_img.resize((250, 386))
+    default_img = default_img.resize(image_ratio)
     default_img_tk = ImageTk.PhotoImage(default_img)
     panel1 = tk.Label(root, image=default_img_tk)
-    panel1.grid(row=5, column=0)
+    panel1.grid(row=rows["fighter-image"], column=0)
 
     panel2 = tk.Label(root, image=default_img_tk)
-    panel2.grid(row=5, column=2)
+    panel2.grid(row=rows["fighter-image"], column=2)
 
     # lock in buttons
     button1 = tk.Button(
@@ -105,12 +141,13 @@ def main_gui():
             name_to_query(input1.get()),
             "fighter1.png",
             fighter_name_label1,
+            fighter_nickname_label1,
             panel1,
             1,
             status_label1,
         ),
     )
-    button1.grid(row=3, column=0)
+    button1.grid(row=rows["input-button"], column=0)
 
     button2 = tk.Button(
         root,
@@ -119,50 +156,69 @@ def main_gui():
             name_to_query(input2.get()),
             "fighter2.png",
             fighter_name_label2,
+            fighter_nickname_label2,
             panel2,
             2,
             status_label2,
         ),
     )
-    button2.grid(row=3, column=2)
+    button2.grid(row=rows["input-button"], column=2)
+
+    analysis_error_label = tk.Label(root, text="")
+    analysis_error_label.grid(
+        row=rows["actions-error"], column=0, columnspan=3, sticky="ew", pady=5
+    )
 
     analyze_button = tk.Button(
         root,
         text="Start Analyzing",
-        command=setup_analysis,
+        command=lambda: setup_analysis(analysis_error_label),
     )
-    analyze_button.grid(row=6, column=1, columnspan=2, pady=25)
+    analyze_button.grid(
+        row=rows["actions"], column=1, columnspan=2, sticky="w", pady=(0, 20)
+    )
 
     settings_button = tk.Button(
         root,
         text="Settings",
         command=lambda: open_settings(root),
     )
-    settings_button.grid(row=6, column=0, padx=25, pady=25)
+    settings_button.grid(row=rows["actions"], column=0, padx=25, pady=(0, 20))
 
     # Run the main loop
     root.mainloop()
 
 
-def update_fighter(fighter_name, image_name, label, img_label, num, status_label):
-    url = f"https://www.ufc.com/athlete/{fighter_name}"
-
+def update_fighter(
+    fighter_name,
+    image_name,
+    fighter_name_label,
+    fighter_nickname_label,
+    img_label,
+    num,
+    status_label,
+):
     try:
         if num == 1:
             global fighter1
             fighter1 = get_fighter_info(query_to_name(fighter_name))
+            query_name = (name_to_query(fighter1.name), 1)
         else:
             global fighter2
             fighter2 = get_fighter_info(query_to_name(fighter_name))
-    except Exception as e:
+            query_name = (name_to_query(fighter2.name), 2)
+    except:
         print("loading fighter info failed")
         status_label.config(
             text="Fighter info not found / Invalid fighter name", fg="red"
         )
-        print(e)
         return
 
     status_label.config(text="")
+
+    print(query_name)
+
+    url = f"https://www.ufc.com/athlete/{query_name[0]}"
 
     try:
         response = requests.get(url, stream=True)
@@ -184,10 +240,15 @@ def update_fighter(fighter_name, image_name, label, img_label, num, status_label
         )
         img.save(image_path)
 
-        label.config(text=query_to_name(fighter_name))
+        if query_name[1] == 1:
+            fighter_name_label.config(text=fighter1.name)
+            fighter_nickname_label.config(text=f'"{fighter1.nickname}"')
+        elif query_name[1] == 2:
+            fighter_name_label.config(text=fighter2.name)
+            fighter_nickname_label.config(text=f'"{fighter2.nickname}"')
 
         new_img = Image.open(image_path)
-        new_img = new_img.resize((250, 386))
+        new_img = new_img.resize(image_ratio)
         new_img_tk = ImageTk.PhotoImage(new_img)
 
         img_label.config(image=new_img_tk)
@@ -196,8 +257,14 @@ def update_fighter(fighter_name, image_name, label, img_label, num, status_label
         os.remove(image_path)
 
     except Exception as e:
-        print("image unable to retrieve")
-        label.config(text=query_to_name(fighter_name))
+        print(f"image unable to retrieve with msg: {e}")
+
+        if query_name[1] == 1:
+            fighter_name_label.config(text=fighter1.name)
+            fighter_nickname_label.config(text=f'"{fighter1.nickname}"')
+        elif query_name[1] == 2:
+            fighter_name_label.config(text=fighter2.name)
+            fighter_nickname_label.config(text=f'"{fighter2.nickname}"')
 
         default_image_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -205,14 +272,14 @@ def update_fighter(fighter_name, image_name, label, img_label, num, status_label
         )
 
         new_img = Image.open(default_image_path)
-        new_img = new_img.resize((250, 386))
+        new_img = new_img.resize(image_ratio)
         new_img_tk = ImageTk.PhotoImage(new_img)
 
         img_label.config(image=new_img_tk)
         img_label.image = new_img_tk
 
 
-def setup_analysis():
+def setup_analysis(error_status_label):
     global fighter1
     global fighter2
     global settings_open
@@ -220,10 +287,16 @@ def setup_analysis():
 
     if fighter1 == None or fighter2 == None:
         print("Two fighters need to be loaded in order to start analyzing")
+        error_status_label.config(
+            text="Two fighters need to be loaded in order to start analyzing", fg="red"
+        )
         return
 
     if settings_open:
         print("Please close the settings page to start the analysis")
+        error_status_label.config(
+            text="Please close the settings page to start the analysis", fg="red"
+        )
         return
 
     # Analysis Criteria

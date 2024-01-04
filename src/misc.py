@@ -22,3 +22,6 @@ def height_to_num(height: str):
     height_list = height.split("'")
     height_inches = int(height_list[0]) * 12 + int(height_list[1][:-1])
     return height_inches
+
+
+image_ratio = (300, 450)

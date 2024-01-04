@@ -3,9 +3,20 @@ from src.misc import *
 
 class Fighter:
     def __init__(
-        self, name, age, height, losses, wins, strikes, takedowns, weight_class, fights
+        self,
+        name,
+        nickname,
+        age,
+        height,
+        losses,
+        wins,
+        strikes,
+        takedowns,
+        weight_class,
+        fights,
     ):
         self.name = name
+        self.nickname = nickname
         self.age = age
         self.height = height_to_num(height)
         self.losses = losses
