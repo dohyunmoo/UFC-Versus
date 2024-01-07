@@ -14,6 +14,8 @@ def str_to_num(input: str):
         try:
             return float(input)
         except:
+            if input == "":
+                return "no change"
             raise ValueError
 
 

@@ -14,6 +14,7 @@ from src.misc import *
 
 fighter1, fighter2 = None, None
 settings_open = False
+output_open = False
 
 metrics = {
     "weight-class": 100,
@@ -26,6 +27,7 @@ metrics = {
 
 def get_fighter_info(fighter_name):
     info = get_fighter(fighter_name)
+    pprint(info)
     if (
         fighter_name.lower() != info["name"].lower()
         and fighter_name.lower() != info["nickname"].lower()
@@ -172,7 +174,7 @@ def main_gui():
     analyze_button = tk.Button(
         root,
         text="Start Analyzing",
-        command=lambda: setup_analysis(analysis_error_label),
+        command=lambda: setup_analysis(analysis_error_label, root),
     )
     analyze_button.grid(
         row=rows["actions"], column=1, columnspan=2, sticky="w", pady=(0, 20)
@@ -279,10 +281,11 @@ def update_fighter(
         img_label.image = new_img_tk
 
 
-def setup_analysis(error_status_label):
+def setup_analysis(error_status_label, root):
     global fighter1
     global fighter2
     global settings_open
+    global output_open
     global metrics
 
     if fighter1 == None or fighter2 == None:
@@ -296,6 +299,13 @@ def setup_analysis(error_status_label):
         print("Please close the settings page to start the analysis")
         error_status_label.config(
             text="Please close the settings page to start the analysis", fg="red"
+        )
+        return
+
+    if output_open:
+        print("Please close the fight outcome page to start the analysis")
+        error_status_label.config(
+            text="Please close the fight outcome page to start the analysis", fg="red"
         )
         return
 
@@ -358,7 +368,6 @@ def setup_analysis(error_status_label):
     )
 
     # technics score
-    
 
     # height score
     if fighter1.height > fighter2.height:
@@ -368,9 +377,13 @@ def setup_analysis(error_status_label):
 
     # experience score
     if fighter1.total_fights_in_UFC > fighter2.total_fights_in_UFC:
-        result_fighter2["UFC-experience-score"] = fighter2.total_fights_in_UFC / fighter1.total_fights_in_UFC
+        result_fighter2["UFC-experience-score"] = (
+            fighter2.total_fights_in_UFC / fighter1.total_fights_in_UFC
+        )
     elif fighter2.total_fights_in_UFC > fighter1.total_fights_in_UFC:
-        result_fighter1["UFC-experience-score"] = fighter1.total_fights_in_UFC / fighter2.total_fights_in_UFC
+        result_fighter1["UFC-experience-score"] = (
+            fighter1.total_fights_in_UFC / fighter2.total_fights_in_UFC
+        )
 
     total_result_fighter1 = 0
     total_result_fighter2 = 0
@@ -393,86 +406,226 @@ def setup_analysis(error_status_label):
     )
 
     print(f"{fighter1_ratio} : {fighter2_ratio}")
+    display_outcome(root, fighter1_ratio, fighter2_ratio)
 
 
-def analyze_outcome():
-    pass
+def display_outcome(root, fighter1_win, fighter2_win):
+    global fighter1
+    global fighter2
+    global settings_open
+    global output_open
+
+    if not settings_open and not output_open:
+        output_open = True
+
+        output_window = tk.Toplevel(root)
+        output_window.title("Fight Outcome")
+
+        outcome_rows = {
+            "title": 0,
+            "names": 1,
+            "weight-class": 2,
+            "age": 3,
+            "technics": 4,
+            "height": 5,
+            "exp": 6,
+            "predicted-outcome-title": 7,
+            "predicted-outcome": 8,
+            "warning": 9,
+            "actions": 10,
+        }
+
+        outcome_title = tk.Label(
+            output_window, text="Fight Outcome", font=("Calibri", 24)
+        )
+        outcome_title.grid(
+            row=outcome_rows["title"],
+            column=0,
+            columnspan=3,
+            sticky="ew",
+            padx=20,
+            pady=20,
+        )
+
+        fighter1_title = tk.Label(output_window, text=fighter1.name, font=("Calibri", 18))
+        fighter1_title.grid(
+            row=outcome_rows["names"], column=0, sticky="ew", padx=20, pady=20
+        )
+
+        fighter2_title = tk.Label(output_window, text=fighter2.name, font=("Calibri", 18))
+        fighter2_title.grid(
+            row=outcome_rows["names"], column=2, sticky="ew", padx=20, pady=20
+        )
+
+        weight_class_label = tk.Label(output_window, text="Weight Class")
+        weight_class_label.grid(
+            row=outcome_rows["weight-class"], column=1, sticky="ew", padx=20, pady=20
+        )
+
+        fighter1_weight_class = tk.Label(output_window, text=fighter1.weight_class)
+        fighter1_weight_class.grid(
+            row=outcome_rows["weight-class"], column=0, sticky="ew", padx=20, pady=20
+        )
+
+        fighter2_weight_class = tk.Label(output_window, text=fighter2.weight_class)
+        fighter2_weight_class.grid(
+            row=outcome_rows["weight-class"], column=2, sticky="ew", padx=20, pady=20
+        )
+
+        age_label = tk.Label(output_window, text="Age")
+        age_label.grid(row=outcome_rows["age"], column=1, sticky="ew", padx=20, pady=20)
+
+        fighter1_age = tk.Label(output_window, text=fighter1.age)
+        fighter1_age.grid(
+            row=outcome_rows["age"], column=0, sticky="ew", padx=20, pady=20
+        )
+
+        fighter2_age = tk.Label(output_window, text=fighter2.age)
+        fighter2_age.grid(
+            row=outcome_rows["age"], column=2, sticky="ew", padx=20, pady=20
+        )
+
+        technics_label = tk.Label(output_window, text="Technics")
+        technics_label.grid(
+            row=outcome_rows["technics"], column=1, sticky="ew", padx=20, pady=20
+        )
+
+        fighter1_technics = tk.Label(output_window, text=fighter1.age)
+        fighter1_technics.grid(
+            row=outcome_rows["technics"], column=0, sticky="ew", padx=20, pady=20
+        )
+
+        fighter2_technics = tk.Label(output_window, text=fighter2.age)
+        fighter2_technics.grid(
+            row=outcome_rows["technics"], column=2, sticky="ew", padx=20, pady=20
+        )
+
+        height_label = tk.Label(output_window, text="Height")
+        height_label.grid(row=outcome_rows["age"], column=1, sticky="ew", padx=20, pady=20)
+
+        fighter1_height = tk.Label(output_window, text=fighter1.height)
+        fighter1_height.grid(
+            row=outcome_rows["height"], column=0, sticky="ew", padx=20, pady=20
+        )
+
+        fighter2_height = tk.Label(output_window, text=fighter2.height)
+        fighter2_height.grid(
+            row=outcome_rows["height"], column=2, sticky="ew", padx=20, pady=20
+        )
+
+        exp_label = tk.Label(output_window, text="UFC Experience")
+        exp_label.grid(row=outcome_rows["exp"], column=1, sticky="ew", padx=20, pady=20)
+
+        fighter1_exp = tk.Label(output_window, text=f"{fighter1.total_fights_in_UFC} fights")
+        fighter1_exp.grid(
+            row=outcome_rows["exp"], column=0, sticky="ew", padx=20, pady=20
+        )
+
+        fighter2_exp = tk.Label(output_window, text=f"{fighter2.total_fights_in_UFC} fights")
+        fighter2_exp.grid(
+            row=outcome_rows["exp"], column=2, sticky="ew", padx=20, pady=20
+        )
+
+        output_window.protocol(
+            "WM_DELETE_WINDOW", lambda: on_outcome_close(output_window)
+        )
 
 
 def open_settings(root):
     global settings_open
     global metrics
 
-    if not settings_open:
+    if not settings_open and not output_open:
         settings_window = tk.Toplevel(root)
         settings_window.title("Settings")
+
+        settings_rows = {
+            "title": 0,
+            "subtitle": 1,
+            "weight-class": 2,
+            "age": 3,
+            "technics": 4,
+            "height": 5,
+            "exp": 6,
+            "warning": 7,
+            "actions": 8,
+        }
 
         settings_title = tk.Label(
             settings_window, text="Analysis Criteria", font=("Calibri", 24)
         )
         settings_title.grid(
-            row=0, column=0, columnspan=2, sticky="ew", padx=20, pady=20
+            row=settings_rows["title"],
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            padx=20,
+            pady=20,
         )
 
-        current_label = tk.Label(settings_window, text="Current Value")
-        current_label.grid(row=1, column=1)
+        current_label = tk.Label(settings_window, text="Current Weight Value")
+        current_label.grid(row=settings_rows["subtitle"], column=1)
 
-        new_label = tk.Label(settings_window, text="New Value")
-        new_label.grid(row=1, column=2)
+        new_label = tk.Label(settings_window, text="New Weight Value")
+        new_label.grid(row=settings_rows["subtitle"], column=2)
 
         weight_class_label = tk.Label(settings_window, text="Weight Class: ")
-        weight_class_label.grid(row=2, column=0)
+        weight_class_label.grid(row=settings_rows["weight-class"], column=0)
 
         weight_current_class_label = tk.Label(
             settings_window, text=str(metrics["weight-class"])
         )
-        weight_current_class_label.grid(row=2, column=1)
+        weight_current_class_label.grid(row=settings_rows["weight-class"], column=1)
 
         weight_class_input = tk.Entry(settings_window)
-        weight_class_input.grid(row=2, column=2, padx=20, pady=15)
+        weight_class_input.grid(
+            row=settings_rows["weight-class"], column=2, padx=20, pady=15
+        )
 
         age_label = tk.Label(settings_window, text="Age: ")
-        age_label.grid(row=3, column=0)
+        age_label.grid(row=settings_rows["age"], column=0)
 
         age_current_label = tk.Label(settings_window, text=str(metrics["age"]))
-        age_current_label.grid(row=3, column=1)
+        age_current_label.grid(row=settings_rows["age"], column=1)
 
         age_input = tk.Entry(settings_window)
-        age_input.grid(row=3, column=2, padx=20, pady=15)
+        age_input.grid(row=settings_rows["age"], column=2, padx=20, pady=15)
 
         technics_label = tk.Label(settings_window, text="Technics: ")
-        technics_label.grid(row=4, column=0)
+        technics_label.grid(row=settings_rows["technics"], column=0)
 
         technics_current_label = tk.Label(
             settings_window, text=str(metrics["technics"])
         )
-        technics_current_label.grid(row=4, column=1)
+        technics_current_label.grid(row=settings_rows["technics"], column=1)
 
         technics_input = tk.Entry(settings_window)
-        technics_input.grid(row=4, column=2, padx=20, pady=15)
+        technics_input.grid(row=settings_rows["technics"], column=2, padx=20, pady=15)
 
         height_label = tk.Label(settings_window, text="Height: ")
-        height_label.grid(row=5, column=0)
+        height_label.grid(row=settings_rows["height"], column=0)
 
         height_current_label = tk.Label(settings_window, text=str(metrics["height"]))
-        height_current_label.grid(row=5, column=1)
+        height_current_label.grid(row=settings_rows["height"], column=1)
 
         height_input = tk.Entry(settings_window)
-        height_input.grid(row=5, column=2, padx=20, pady=15)
+        height_input.grid(row=settings_rows["height"], column=2, padx=20, pady=15)
 
         experience_label = tk.Label(settings_window, text="UFC Fight Experience: ")
-        experience_label.grid(row=6, column=0)
+        experience_label.grid(row=settings_rows["exp"], column=0)
 
         experience_current_label = tk.Label(
             settings_window, text=str(metrics["UFC-experience"])
         )
-        experience_current_label.grid(row=6, column=1)
+        experience_current_label.grid(row=settings_rows["exp"], column=1)
 
         experience_input = tk.Entry(settings_window)
-        experience_input.grid(row=6, column=2, padx=20, pady=15)
+        experience_input.grid(row=settings_rows["exp"], column=2, padx=20, pady=15)
 
         warning_label = tk.Label(settings_window, text="")
-        warning_label.grid(row=7, column=0, columnspan=2, padx=20, pady=15)
+        warning_label.grid(
+            row=settings_rows["warning"], column=0, columnspan=2, padx=20, pady=15
+        )
 
         save_button = tk.Button(
             settings_window,
@@ -487,14 +640,14 @@ def open_settings(root):
                 warning_label,
             ),
         )
-        save_button.grid(row=8, column=0, pady=20)
+        save_button.grid(row=settings_rows["actions"], column=0, pady=20)
 
         cancel_button = tk.Button(
             settings_window,
             text="Cancel",
             command=lambda: on_settings_close(settings_window),
         )
-        cancel_button.grid(row=8, column=1, pady=20)
+        cancel_button.grid(row=settings_rows["actions"], column=1, pady=20)
 
         settings_open = True
 
@@ -502,18 +655,32 @@ def open_settings(root):
             "WM_DELETE_WINDOW", lambda: on_settings_close(settings_window)
         )
     else:
-        print("Settings open already")
+        print("Settings/Outcome Window is open already")
 
 
 def save_metrics(window, w_entry, a_entry, t_entry, h_entry, e_entry, warning_label):
     global metrics
 
     try:
-        metrics["weight-class"] = str_to_num(w_entry.get())
-        metrics["age"] = str_to_num(a_entry.get())
-        metrics["technics"] = str_to_num(t_entry.get())
-        metrics["height"] = str_to_num(h_entry.get())
-        metrics["UFC-experience"] = str_to_num(e_entry.get())
+        new_val_weight = str_to_num(w_entry.get())
+        if new_val_weight != "no change":
+            metrics["weight-class"] = new_val_weight
+
+        new_val_age = str_to_num(a_entry.get())
+        if new_val_age != "no change":
+            metrics["age"] = new_val_weight
+
+        new_val_technics = str_to_num(t_entry.get())
+        if new_val_technics != "no change":
+            metrics["technics"] = new_val_technics
+
+        new_val_height = str_to_num(h_entry.get())
+        if new_val_height != "no change":
+            metrics["height"] = new_val_height
+
+        new_val_exp = str_to_num(e_entry.get())
+        if new_val_exp != "no change":
+            metrics["UFC-experience"] = new_val_exp
 
         on_settings_close(window)
 
@@ -524,5 +691,12 @@ def save_metrics(window, w_entry, a_entry, t_entry, h_entry, e_entry, warning_la
 def on_settings_close(window):
     global settings_open
     settings_open = False
+
+    window.destroy()
+
+
+def on_outcome_close(window):
+    global output_open
+    output_open = False
 
     window.destroy()
