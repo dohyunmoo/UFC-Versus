@@ -302,17 +302,17 @@ def setup_analysis(error_status_label):
     # Analysis Criteria
     result_fighter1 = {
         "weight-class-score": -1,
-        "age-score": -1,
+        "age-score": 1,
         "technics-score": -1,
-        "height-score": 0,
-        "UFC-experience-score": -1,
+        "height-score": 1,
+        "UFC-experience-score": 1,
     }
     result_fighter2 = {
         "weight-class-score": -1,
-        "age-score": -1,
+        "age-score": 1,
         "technics-score": -1,
-        "height-score": 0,
-        "UFC-experience-score": -1,
+        "height-score": 1,
+        "UFC-experience-score": 1,
     }
 
     total_weight = sum(metrics.values())
@@ -349,7 +349,7 @@ def setup_analysis(error_status_label):
             - weight_class_scores[fighter1.weight_class][0]
         )
 
-    # age difference score
+    # age difference score (closer a fighter is to the prime age of a weight class, more points are given)
     result_fighter1["age-score"] = 1 / (
         abs(int(fighter1.age) - weight_class_scores[fighter1.weight_class][1]) + 1
     )
@@ -358,16 +358,19 @@ def setup_analysis(error_status_label):
     )
 
     # technics score
+    
 
     # height score
     if fighter1.height > fighter2.height:
-        result_fighter1["height-score"] = (fighter1.height - fighter2.height) / 10
+        result_fighter2["height-score"] = fighter2.height / (fighter1.height * 1.25)
     elif fighter2.height > fighter1.height:
-        result_fighter2["height-score"] = (fighter2.height - fighter1.height) / 10
+        result_fighter1["height-score"] = fighter1.height / (fighter2.height * 1.25)
 
     # experience score
-    result_fighter1["UFC-experience-score"] = fighter1.total_fights_in_UFC / 10
-    result_fighter2["UFC-experience-score"] = fighter2.total_fights_in_UFC / 10
+    if fighter1.total_fights_in_UFC > fighter2.total_fights_in_UFC:
+        result_fighter2["UFC-experience-score"] = fighter2.total_fights_in_UFC / fighter1.total_fights_in_UFC
+    elif fighter2.total_fights_in_UFC > fighter1.total_fights_in_UFC:
+        result_fighter1["UFC-experience-score"] = fighter1.total_fights_in_UFC / fighter2.total_fights_in_UFC
 
     total_result_fighter1 = 0
     total_result_fighter2 = 0
