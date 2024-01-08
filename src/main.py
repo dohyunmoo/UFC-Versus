@@ -117,8 +117,8 @@ def main_gui():
     )
 
     root.rowconfigure(rows["fighter-image"], minsize=500)
-    root.columnconfigure(0, minsize=400)
-    root.columnconfigure(2, minsize=400)
+    root.columnconfigure(0, minsize=500)
+    root.columnconfigure(2, minsize=500)
 
     # fighter images
     default_img = Image.open(
@@ -435,8 +435,11 @@ def display_outcome(root, fighter1_win, fighter2_win):
             "actions": 10,
         }
 
+        output_window.columnconfigure(0, minsize=350)
+        output_window.columnconfigure(2, minsize=350)
+
         outcome_title = tk.Label(
-            output_window, text="Fight Outcome", font=("Calibri", 24)
+            output_window, text="Fight Outcome", font=("Calibri", 24, "bold")
         )
         outcome_title.grid(
             row=outcome_rows["title"],
@@ -447,17 +450,17 @@ def display_outcome(root, fighter1_win, fighter2_win):
             pady=20,
         )
 
-        fighter1_title = tk.Label(output_window, text=fighter1.name, font=("Calibri", 18))
+        fighter1_title = tk.Label(output_window, text=fighter1.name, font=("Calibri", 18, "bold"))
         fighter1_title.grid(
             row=outcome_rows["names"], column=0, sticky="ew", padx=20, pady=20
         )
 
-        fighter2_title = tk.Label(output_window, text=fighter2.name, font=("Calibri", 18))
+        fighter2_title = tk.Label(output_window, text=fighter2.name, font=("Calibri", 18, "bold"))
         fighter2_title.grid(
             row=outcome_rows["names"], column=2, sticky="ew", padx=20, pady=20
         )
 
-        weight_class_label = tk.Label(output_window, text="Weight Class")
+        weight_class_label = tk.Label(output_window, text="Weight Class", font=("Calibri", 14, "bold"))
         weight_class_label.grid(
             row=outcome_rows["weight-class"], column=1, sticky="ew", padx=20, pady=20
         )
@@ -472,7 +475,7 @@ def display_outcome(root, fighter1_win, fighter2_win):
             row=outcome_rows["weight-class"], column=2, sticky="ew", padx=20, pady=20
         )
 
-        age_label = tk.Label(output_window, text="Age")
+        age_label = tk.Label(output_window, text="Age", font=("Calibri", 14, "bold"))
         age_label.grid(row=outcome_rows["age"], column=1, sticky="ew", padx=20, pady=20)
 
         fighter1_age = tk.Label(output_window, text=fighter1.age)
@@ -485,35 +488,35 @@ def display_outcome(root, fighter1_win, fighter2_win):
             row=outcome_rows["age"], column=2, sticky="ew", padx=20, pady=20
         )
 
-        technics_label = tk.Label(output_window, text="Technics")
-        technics_label.grid(
-            row=outcome_rows["technics"], column=1, sticky="ew", padx=20, pady=20
-        )
+        # technics_label = tk.Label(output_window, text="Technics")
+        # technics_label.grid(
+        #     row=outcome_rows["technics"], column=1, sticky="ew", padx=20, pady=20
+        # )
 
-        fighter1_technics = tk.Label(output_window, text=fighter1.age)
-        fighter1_technics.grid(
-            row=outcome_rows["technics"], column=0, sticky="ew", padx=20, pady=20
-        )
+        # fighter1_technics = tk.Label(output_window, text=fighter1.age)
+        # fighter1_technics.grid(
+        #     row=outcome_rows["technics"], column=0, sticky="ew", padx=20, pady=20
+        # )
 
-        fighter2_technics = tk.Label(output_window, text=fighter2.age)
-        fighter2_technics.grid(
-            row=outcome_rows["technics"], column=2, sticky="ew", padx=20, pady=20
-        )
+        # fighter2_technics = tk.Label(output_window, text=fighter2.age)
+        # fighter2_technics.grid(
+        #     row=outcome_rows["technics"], column=2, sticky="ew", padx=20, pady=20
+        # )
 
-        height_label = tk.Label(output_window, text="Height")
-        height_label.grid(row=outcome_rows["age"], column=1, sticky="ew", padx=20, pady=20)
+        height_label = tk.Label(output_window, text="Height", font=("Calibri", 14, "bold"))
+        height_label.grid(row=outcome_rows["height"], column=1, sticky="ew", padx=20, pady=20)
 
-        fighter1_height = tk.Label(output_window, text=fighter1.height)
+        fighter1_height = tk.Label(output_window, text=f"{fighter1.height} inches")
         fighter1_height.grid(
             row=outcome_rows["height"], column=0, sticky="ew", padx=20, pady=20
         )
 
-        fighter2_height = tk.Label(output_window, text=fighter2.height)
+        fighter2_height = tk.Label(output_window, text=f"{fighter2.height} inches")
         fighter2_height.grid(
             row=outcome_rows["height"], column=2, sticky="ew", padx=20, pady=20
         )
 
-        exp_label = tk.Label(output_window, text="UFC Experience")
+        exp_label = tk.Label(output_window, text="UFC Experience", font=("Calibri", 14, "bold"))
         exp_label.grid(row=outcome_rows["exp"], column=1, sticky="ew", padx=20, pady=20)
 
         fighter1_exp = tk.Label(output_window, text=f"{fighter1.total_fights_in_UFC} fights")
@@ -524,6 +527,26 @@ def display_outcome(root, fighter1_win, fighter2_win):
         fighter2_exp = tk.Label(output_window, text=f"{fighter2.total_fights_in_UFC} fights")
         fighter2_exp.grid(
             row=outcome_rows["exp"], column=2, sticky="ew", padx=20, pady=20
+        )
+
+        win_rate_label = tk.Label(output_window, text="Estimated Win Probability", font=("Calibri", 32, "bold"))
+        win_rate_label.grid(
+            row=outcome_rows["predicted-outcome-title"], column=0, columnspan=3, sticky="ew", padx=20, pady=20
+        )
+
+        win_rate_fighter1 = tk.Label(output_window, text=round(fighter1_win, 3), font=("Calibri", 24))
+        win_rate_fighter1.grid(
+            row=outcome_rows["predicted-outcome"], column=0, sticky="ew", padx=20, pady=20
+        )
+
+        win_rate_fighter2 = tk.Label(output_window, text=round(fighter2_win, 3), font=("Calibri", 24))
+        win_rate_fighter2.grid(
+            row=outcome_rows["predicted-outcome"], column=2, sticky="ew", padx=20, pady=20
+        )
+
+        versus_label = tk.Label(output_window, text="VS", font=("Calibri", 20, "bold"))
+        versus_label.grid(
+            row=outcome_rows["predicted-outcome"], column=1, sticky="ew", padx=20, pady=20
         )
 
         output_window.protocol(
@@ -591,16 +614,16 @@ def open_settings(root):
         age_input = tk.Entry(settings_window)
         age_input.grid(row=settings_rows["age"], column=2, padx=20, pady=15)
 
-        technics_label = tk.Label(settings_window, text="Technics: ")
-        technics_label.grid(row=settings_rows["technics"], column=0)
+        # technics_label = tk.Label(settings_window, text="Technics: ")
+        # technics_label.grid(row=settings_rows["technics"], column=0)
 
-        technics_current_label = tk.Label(
-            settings_window, text=str(metrics["technics"])
-        )
-        technics_current_label.grid(row=settings_rows["technics"], column=1)
+        # technics_current_label = tk.Label(
+        #     settings_window, text=str(metrics["technics"])
+        # )
+        # technics_current_label.grid(row=settings_rows["technics"], column=1)
 
-        technics_input = tk.Entry(settings_window)
-        technics_input.grid(row=settings_rows["technics"], column=2, padx=20, pady=15)
+        # technics_input = tk.Entry(settings_window)
+        # technics_input.grid(row=settings_rows["technics"], column=2, padx=20, pady=15)
 
         height_label = tk.Label(settings_window, text="Height: ")
         height_label.grid(row=settings_rows["height"], column=0)
@@ -634,7 +657,7 @@ def open_settings(root):
                 settings_window,
                 weight_class_input,
                 age_input,
-                technics_input,
+                # technics_input,
                 height_input,
                 experience_input,
                 warning_label,
@@ -658,7 +681,7 @@ def open_settings(root):
         print("Settings/Outcome Window is open already")
 
 
-def save_metrics(window, w_entry, a_entry, t_entry, h_entry, e_entry, warning_label):
+def save_metrics(window, w_entry, a_entry, h_entry, e_entry, warning_label): # t_entry to be implemented
     global metrics
 
     try:
@@ -670,9 +693,9 @@ def save_metrics(window, w_entry, a_entry, t_entry, h_entry, e_entry, warning_la
         if new_val_age != "no change":
             metrics["age"] = new_val_weight
 
-        new_val_technics = str_to_num(t_entry.get())
-        if new_val_technics != "no change":
-            metrics["technics"] = new_val_technics
+        # new_val_technics = str_to_num(t_entry.get())
+        # if new_val_technics != "no change":
+        #     metrics["technics"] = new_val_technics
 
         new_val_height = str_to_num(h_entry.get())
         if new_val_height != "no change":
