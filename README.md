@@ -1,5 +1,6 @@
 # UFC Matchip Predictor
-> Simple program to predict the outcome of a hypothetical matchup between two UFC fighters.
+> Simple program to predict the outcome of a hypothetical matchup between two UFC fighters.\
+> Live Demo - [Link](https://youtu.be/Marp2-Hh9gY)
 
 <!-- > Live demo [_here_](https://www.example.com).  If you have the project hosted somewhere, include the link here. -->
 
@@ -7,9 +8,7 @@
 * [General Info](#general-information)
 * [Technologies Used](#technologies-used)
 * [Setup](#setup)
-* [Usage](#usage)
-* [Project Status](#project-status)
-* [To Do](#to-do)
+* [Improvements](#improvements)
 * [Contact](#contact)
 <!--
 * [Room for Improvement](#room-for-improvement)
@@ -32,30 +31,24 @@
 ## Setup
 
 Must have Python3 installed in the system to operate
+```
+pip install -r requirements
 
-Install requirements using requirements.txt
-`pip install -r requirements`
+cd ./UFC-Versus
+or
+dir ./UFC-Versus
 
-
-## Usage
-
-Navigate to the `UFC-VERSUS` directory and locate `run.py` python file
-
-Run the python program using
-`py run.py`
+py run.py
+```
 
 
-## Project Status
-Project is: _in progress_.
-
-
-## To Do:
-- Implement better output generation
-- include technical features of fighters for the generated outcome 
+## Improvements:
+- include technical aspects of fighters for the generated outcome
+- better UI/UX
 
 
 ## Contact
-Created by [Dohyun Moon (_d6moon@uwaterloo.ca_)](https://www.linkedin.com/in/dohyun-m-50a551165/) - feel free to contact me!
+Created by [Dohyun Moon (_d6moon@uwaterloo.ca_)](https://www.linkedin.com/in/dohyun-m-50a551165/) - feel free to contact me if you have any questions!
 
 
 <!-- Optional -->
