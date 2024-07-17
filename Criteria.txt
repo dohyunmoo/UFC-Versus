@@ -1,5 +1,7 @@
 fighter1 - fighter 2
 
+0. Male vs Female : 150
+
 1. weightclass difference -> (HW = 1000, LHW = 875, MW = 750, WW = 625, LW = 500, FW = 375, BW = 250, FLW = 125) : max 100
 
 2. age difference -> (HW prime = 35, LHW, MW prime = 34, WW, LW, FW prime = 32, BW, FLW prime = 31) : max 80
